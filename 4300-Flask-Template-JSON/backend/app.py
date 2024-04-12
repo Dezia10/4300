@@ -224,7 +224,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Sample search using json with pandas
-def json_search(locPreference, pricePreference, foodPreference, qualityPreference):
+def json_search(locPreference, pricePreference, foodPreference, qualityPreference, resturantPreference):
     # change later once more info has been added to json
     # ie. location of restaurant + price info
     combined = {'results': []}
@@ -252,7 +252,8 @@ def episodes_search():
     pricePreference = request.args.get("pricePreference")
     foodPreference = request.args.get("foodPreference")
     qualityPreference = request.args.get("qualityPreference")
-    return json_search(locPreference, pricePreference, foodPreference, qualityPreference)
+    resturantPreference = request.args.get("resturantPreference")
+    return json_search(locPreference, pricePreference, foodPreference, qualityPreference, resturantPreference)
 
 if 'DB_NAME' not in os.environ:
     app.run(debug=True,host="0.0.0.0",port=5000)

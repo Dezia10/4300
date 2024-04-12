@@ -1,80 +1,147 @@
-<!doctype html>
+<!DOCTYPE html>
 <title>{% block title %}{% endblock %} - Flaskr</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet"
+/>
 <body>
-    <div class="full-body-container">
-        <div class="top-text">
-            <div class="placeholder">
-                <div class="title-section">
-                    <div class="parallax"></div>
-                    <h1 id="app-name"><span class="highlight">C</span>Town <span class="highlight">C</span>ritic<span class="end">s</span></h1>
-                    <h2>Search for a CTown or On-Campus Dining Recommendatio<span class="end">n</span></h2>
-                </div>
-                <div class="input-form">
-                    <h3 id="form-header">Preferred Location?</h3>
-                    <input type="radio" value="CTown" name="loc-preference" id="loc-ctown">
-                    <label for="CTown">CTown</label>
-                    <input type="radio" value="On Campus" name="loc-preference" id="loc-campus">
-                    <label for="On Campus">On Campus</label>
-                    <input type="radio" value="No Preference" name="loc-preference" id="loc-none">
-                    <label for="No Preference">No Preference</label><br><br>
-
-                    <h3 id="form-header">Preferred Price Point(s)?</h3>
-                    <input type="checkbox" value="Low" name="price-preference" id="price-low">
-                    <label for="Low">Low</label>
-                    <input type="checkbox" value="Medium" name="price-preference" id="price-med">
-                    <label for="Medium">Medium</label>
-                    <input type="checkbox" value="High" name="price-preference" id="price-high">
-                    <label for="High">High</label><br><br>
-
-                    <h3 id="form-header">Type of Food?</h3>
-                    <input type="text" placeholder="ex: Indian" name="food-preference" id="pref-food"><br><br>
-
-                    <h3 id="form-header">Key Qualities?</h3>
-                    <input type="text" placeholder="ex: good value, decent service, etc." name="quality-preference" id="pref-quality"><br><br>
-                    
-                    <input type="button" value="Submit" id="submission-button" onclick="filterText()">
-                    
-                </div>
-            </div>
+  <div class="full-body-container">
+    <div class="top-text">
+      <div class="placeholder">
+        <div class="title-section">
+          <div class="parallax"></div>
+          <h1 id="app-name">
+            <span class="highlight">C</span>Town
+            <span class="highlight">C</span>ritic<span class="end">s</span>
+          </h1>
+          <h2>
+            Search for a CTown or On-Campus Dining Recommendatio<span
+              class="end"
+              >n</span
+            >
+          </h2>
         </div>
-        <div id="answer-box">
+        <div class="input-form">
+          <h3 id="form-header">Preferred Location?</h3>
+          <input
+            type="radio"
+            value="CTown"
+            name="loc-preference"
+            id="loc-ctown"
+          />
+          <label for="CTown">CTown</label>
+          <input
+            type="radio"
+            value="On Campus"
+            name="loc-preference"
+            id="loc-campus"
+          />
+          <label for="On Campus">On Campus</label>
+          <input
+            type="radio"
+            value="No Preference"
+            name="loc-preference"
+            id="loc-none"
+          />
+          <label for="No Preference">No Preference</label><br /><br />
 
+          <h3 id="form-header">Preferred Price Point(s)?</h3>
+          <input
+            type="checkbox"
+            value="Low"
+            name="price-preference"
+            id="price-low"
+          />
+          <label for="Low">Low</label>
+          <input
+            type="checkbox"
+            value="Medium"
+            name="price-preference"
+            id="price-med"
+          />
+          <label for="Medium">Medium</label>
+          <input
+            type="checkbox"
+            value="High"
+            name="price-preference"
+            id="price-high"
+          />
+          <label for="High">High</label><br /><br />
+
+          <h3 id="form-header">Type of Food?</h3>
+          <input
+            type="text"
+            placeholder="ex: Indian"
+            name="food-preference"
+            id="pref-food"
+          /><br /><br />
+
+          <h3 id="form-header">Key Qualities?</h3>
+          <input
+            type="text"
+            placeholder="ex: good value, decent service, etc."
+            name="quality-preference"
+            id="pref-quality"
+          /><br /><br />
+
+          <input
+            type="button"
+            value="Submit"
+            id="submission-button"
+            onclick="filterText()"
+          />
         </div>
+      </div>
     </div>
+    <div id="answer-box"></div>
+  </div>
 
-    <script>
-
-        function answerBoxTemplate(name, reviews, rating){
-            return `<div class=''>
+  <script>
+    function answerBoxTemplate(name, reviews, rating) {
+      return `<div class='d-class'>
                 <h3 class='restaurant-name'>${name}</h3>
                 <p class='restaurant-reviews'>${reviews.toString()}</p>
                 <p class='restaurant-rating'>Overall Rating: ${rating}</p>
-            </div>`
-        }
+            </div>`;
+    }
 
-        function filterText(){
-            document.getElementById("answer-box").innerHTML = ""
+    function filterText() {
+      document.getElementById("answer-box").innerHTML = "";
 
-            let fetch_res = fetch("/restaurants?" + new URLSearchParams({ 
-                locPreference: document.querySelector('input[name="loc-preference"]:checked').value,
-                pricePreference: document.querySelector('input[name="price-preference"]:checked').value,
-                foodPreference: document.getElementById("pref-food").value,
-                qualityPreference: document.getElementById("pref-quality").value,
-            }).toString())
-            .then((response) => response.json())
-            .then((data) => data.results.forEach(row => {
-                let tempDiv = document.createElement("div")
-                tempDiv.innerHTML = answerBoxTemplate(row.name, row.reviews, row.rating)
-                document.getElementById("answer-box").appendChild(tempDiv)
-            }));
-        }
-            
-    </script>
+      let fetch_res = fetch(
+        "/restaurants?" +
+          new URLSearchParams({
+            locPreference: document.querySelector(
+              'input[name="loc-preference"]:checked'
+            ).value,
+            pricePreference: document.querySelector(
+              'input[name="price-preference"]:checked'
+            ).value,
+            foodPreference: document.getElementById("pref-food").value,
+            qualityPreference: document.getElementById("pref-quality").value,
+          }).toString()
+      )
+        .then((response) => response.json())
+        .then((data) =>
+          data.results.forEach((row) => {
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = answerBoxTemplate(
+              row.name,
+              row.reviews,
+              row.rating
+            );
+            document.getElementById("answer-box").appendChild(tempDiv);
+          })
+        );
+    }
+  </script>
 </body>

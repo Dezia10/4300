@@ -9,6 +9,7 @@ import math
 import re
 import numpy as np
 import math
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
@@ -130,6 +131,8 @@ for word in word_set:
 #we want to keep match query to restaurant, not query to individual review
 #so counts will be based on number of times in all reviews for restaurants
 inv_idx = {}
+#since we are parsing over all reviews anyway, also create list of reviews
+all_reviews = []
 for restaurant in data.keys():
   cur_res_num = res_to_num[restaurant]
   #keeps track of occurrences for current restaurant
@@ -137,6 +140,7 @@ for restaurant in data.keys():
   try:
     #sum up occurrences over each review
     for review in data[restaurant]['reviews']:
+      all_reviews.append(review)
       #tokenize review
       tokenized = tokenizer(review.lower())
       #get list of words in review
@@ -176,6 +180,14 @@ for term in idf.keys():
 result = (np.vectorize(math.sqrt))(norms)
 #end
 
+#create co-occurrence matrix (modified from code given in lecture 9)
+count_vec = CountVectorizer(stop_words='english', min_df = MIN_FREQ, binary = True)
+rev_vocab = count_vec.fit_transform(all_reviews)
+svd_tokens = list(count_vec.get_feature_names_out)
+term_rev_matrix = rev_vocab.toarray().T
+cooccurrence = np.dot(term_rev_matrix, term_rev_matrix.T)
+
+
 #Amirah's dot product calculation
 def accumulate_dot_scores(query_word_counts, index, idf):
     result = {}
@@ -192,6 +204,38 @@ def accumulate_dot_scores(query_word_counts, index, idf):
 
     return result
 #end
+
+#combine multiple queries; for now this is just going to be an average
+def combine_queries(query_list):
+  combined_word_counts = {}
+  combined_token_set = ()
+  for query in query_list:
+    tokenized_query = tokenizer(query.lower())
+    query_token_set = set(tokenized_query)
+    combined_token_set.add(query_token_set)
+    for word in query_token_set:
+      if word in combined_word_counts:
+        combined_word_counts[word] += 1
+      else:
+        combined_word_counts[word] = 1
+  return (combined_word_counts, combined_token_set)
+  
+
+def multi_q_ranks(query_list):
+  combined_word_counts, combined_token_set = combine_queries(query_list)
+  #amirah cosine calculation but changed to combined_word_counts
+  score_acc = accumulate_dot_scores(combined_word_counts, inv_idx, idf)
+  doc_denom_dict = norms
+  q_denom_sq = 0
+  for word in combined_token_set:
+    if word in idf.keys() and word in combined_word_counts.keys():
+      q_denom_sq += (combined_word_counts[word] * idf[word]) ** 2
+  q_denom = math.sqrt(q_denom_sq)
+
+  result = [(score_acc[doc_id]/((q_denom * doc_denom_dict[doc_id]) + 1), doc_id) for doc_id in score_acc.keys()]
+  result.sort(key=lambda score: score[0], reverse=True)
+  #end
+  return result
 
 def ranks(query):
     #process query
@@ -221,6 +265,7 @@ def ranks(query):
 #end of angela similarity method
 
 app = Flask(__name__)
+
 CORS(app)
 
 # Sample search using json with pandas

@@ -183,15 +183,14 @@ result = (np.vectorize(math.sqrt))(norms)
 #create co-occurrence matrix (modified from code given in lecture 9)
 count_vec = CountVectorizer(stop_words='english', min_df = MIN_FREQ, binary = True)
 rev_vocab = count_vec.fit_transform(all_reviews)
+print(rev_vocab)
 svd_tokens = list(count_vec.get_feature_names_out)
 term_rev_matrix = rev_vocab.toarray().T
 cooccurrence = np.dot(term_rev_matrix, term_rev_matrix.T)
 
-
 #Amirah's dot product calculation
 def accumulate_dot_scores(query_word_counts, index, idf):
     result = {}
-
     for term in idf.keys():
       for item in index[term]:
         if term in query_word_counts:
@@ -239,6 +238,7 @@ def multi_q_ranks(query_list):
 
 def ranks(query):
     #process query
+    res_name = query.lower()
     tokenized_query = tokenizer(query.lower())
     query_token_set = set(tokenized_query)
     query_word_counts = {}
@@ -247,7 +247,6 @@ def ranks(query):
         query_word_counts[word] += 1
       else:
          query_word_counts[word] = 1
-
     #Amirah's cosine calculation
     score_acc = accumulate_dot_scores(query_word_counts, inv_idx, idf)
     doc_denom_dict = norms
@@ -273,7 +272,7 @@ def json_search(locPreference, pricePreference, foodPreference, qualityPreferenc
     # change later once more info has been added to json
     # ie. location of restaurant + price info
     combined = {'results': []}
-    raw_results = ranks(foodPreference + " " + qualityPreference)[:5]
+    raw_results = ranks(resturantPreference)[:5]
     for i in range(len(raw_results)):
       rest = num_to_res[raw_results[i][1]]
       ratings = data[rest]['star rating']
@@ -297,7 +296,7 @@ def episodes_search():
     pricePreference = request.args.get("pricePreference")
     foodPreference = request.args.get("foodPreference")
     qualityPreference = request.args.get("qualityPreference")
-    resturantPreference = request.args.get("resturantPreference")
+    resturantPreference = [request.args.get("resturantPreference")]
     return json_search(locPreference, pricePreference, foodPreference, qualityPreference, resturantPreference)
 
 if 'DB_NAME' not in os.environ:
